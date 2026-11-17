@@ -3,120 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaddieTrack - Portal de Caddies</title>
+    <title>CaddieTrack - Los Arrayanes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Barra de Navegación -->
-    <header class="navbar">
-        <div class="logo">
-            <h1>CaddieTrack</h1>
-            <p>Club Campestre Los Arrayanes - Apoyo Caddie Master</p>
-        </div>
-        <nav>
-            <button onclick="mostrarSeccion('registro')" class="nav-btn active" id="btn-registro">Registro Facial</button>
-            <button onclick="mostrarSeccion('turnos')" class="nav-btn" id="btn-turnos">Lista de Turnos</button>
-            <button onclick="mostrarSeccion('horarios')" class="nav-btn" id="btn-horarios">Tee Times</button>
-        </nav>
-    </header>
 
-    <!-- Contenido Principal -->
-    <main class="container">
-        
-        <!-- SECCIÓN 1: Registro Facial (Mockup) -->
-        <section id="registro" class="seccion activa">
-            <h2>Registro de Llegada</h2>
-            <p>Acércate a la cámara para registrar tu turno automáticamente.</p>
+    <!-- 1. SPLASH SCREEN (Animación Inicial) -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">
+                <!-- Icono SVG de Golf / CaddieTrack -->
+                <svg viewBox="0 0 64 64" width="84" height="84" fill="none" stroke="#D4AF37" stroke-width="3">
+                    <circle cx="32" cy="32" r="28" stroke="#A5D6A7" stroke-width="2" stroke-dasharray="6 4"/>
+                    <path d="M24 48V14L46 22L24 30" fill="#D4AF37" stroke="#D4AF37" stroke-linejoin="round"/>
+                    <ellipse cx="24" cy="50" rx="10" ry="3" fill="#A5D6A7" stroke="none"/>
+                </svg>
+            </div>
+            <h1>CaddieTrack</h1>
+            <p>Club Campestre Los Arrayanes</p>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+        </div>
+    </div>
+
+    <!-- 2. PANTALLA DE INICIO / AUTENTICACIÓN -->
+    <div id="auth-screen" class="auth-screen oculto">
+        <!-- Botón discreto exclusivo para configurar la Tablet de Portería -->
+        <button class="btn-kiosk-access" onclick="abrirModoPorteria()" title="Modo Tablet Portería">
+            📷 Terminal Portería
+        </button>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>CaddieTrack</h2>
+                <p>Gestión de Turnos y Tee Times</p>
+            </div>
+
+            <!-- Pestañas Login / Registro -->
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab active" onclick="cambiarTabAuth('login')">Iniciar Sesión</button>
+                <button id="tab-register" class="auth-tab" onclick="cambiarTabAuth('register')">Registrarse</button>
+            </div>
+
+            <!-- Formulario Iniciar Sesión -->
+            <form id="form-login" onsubmit="iniciarSesion(event)">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <input type="text" id="login-user" placeholder="Ej: jprieto o master" required>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Ingresar</button>
+                
+                <div class="demo-hints">
+                    <small><strong>Accesos rápidos de prueba:</strong></small>
+                    <div class="hint-buttons">
+                        <button type="button" onclick="autocompletar('jprieto', '1234')">Caddie (3ra Cat.)</button>
+                        <button type="button" onclick="autocompletar('master', 'admin')">Caddie Master</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Formulario Registro (Caddies) -->
+            <form id="form-register" class="oculto" onsubmit="registrarCaddie(event)">
+                <div class="input-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="reg-nombre" placeholder="Ej: Juan Camilo Prieto" required>
+                </div>
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <input type="text" id="reg-user" placeholder="Ej: jprieto" required>
+                </div>
+                <div class="input-group">
+                    <label>Categoría</label>
+                    <select id="reg-categoria" required>
+                        <option value="Primera">Primera Categoría</option>
+                        <option value="Segunda">Segunda Categoría</option>
+                        <option value="Tercera" selected>Tercera Categoría</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="reg-pass" placeholder="Crea una contraseña" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Crear Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. MÓDULO PORTERÍA (Tablet Exclusiva Reconocimiento Facial) -->
+    <div id="kiosk-screen" class="kiosk-screen oculto">
+        <header class="kiosk-header">
+            <div>
+                <h2>Punto de Control - Portería</h2>
+                <p>Terminal exclusiva de registro biométrico</p>
+            </div>
+            <button class="btn-salir-kiosk" onclick="cerrarModoPorteria()">Salir de Terminal</button>
+        </header>
+
+        <main class="kiosk-body">
             <div class="camara-mockup">
+                <div class="scan-line"></div>
                 <div class="marco-facial">
                     <span class="esquina tl"></span>
                     <span class="esquina tr"></span>
                     <span class="esquina bl"></span>
                     <span class="esquina br"></span>
-                    <p>Buscando rostro...</p>
+                    <p id="estado-camara">Posicione su rostro frente a la tablet</p>
                 </div>
             </div>
-            <button class="btn-simular" onclick="simularRegistro()">Simular Reconocimiento Exitoso</button>
-            <div id="mensaje-registro" class="oculto"></div>
-        </section>
 
-        <!-- SECCIÓN 2: Lista de Turnos -->
-        <section id="turnos" class="seccion oculto">
-            <h2>Asignación de Turnos</h2>
-            <p>Orden de salida basado en categoría y hora de llegada.</p>
-            <table class="tabla-datos">
-                <thead>
-                    <tr>
-                        <th>Posición</th>
-                        <th>Caddie</th>
-                        <th>Categoría</th>
-                        <th>Hora de Llegada</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-caddies">
-                    <tr>
-                        <td>1</td>
-                        <td>Carlos Mendoza</td>
-                        <td>Primera</td>
-                        <td>05:30 AM</td>
-                        <td><span class="badge en-campo">En Campo</span></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Juan Camilo Prieto</td>
-                        <td>Tercera</td>
-                        <td>06:05 AM</td>
-                        <td><span class="badge disponible">Disponible</span></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Andrés Vargas</td>
-                        <td>Segunda</td>
-                        <td>06:15 AM</td>
-                        <td><span class="badge disponible">Disponible</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+            <div class="kiosk-controls">
+                <label for="select-caddie-sim">Simular detección de caddie en puerta:</label>
+                <select id="select-caddie-sim">
+                    <option value="Andrés Vargas|Segunda">Andrés Vargas (2da Categoría)</option>
+                    <option value="Mateo Silva|Tercera">Mateo Silva (3ra Categoría)</option>
+                    <option value="Carlos Mendoza|Primera">Carlos Mendoza (1ra Categoría)</option>
+                </select>
+                <button class="btn-primary" onclick="simularEscaneoFacial()">Escanear Rostro y Encolar</button>
+            </div>
 
-        <!-- SECCIÓN 3: Horarios y Tee Times -->
-        <section id="horarios" class="seccion oculto">
-            <h2>Horarios Reservados (Tee Times)</h2>
-            <p>Consulta la ocupación del campo para el día de hoy.</p>
-            <table class="tabla-datos">
-                <thead>
-                    <tr>
-                        <th>Hora (Tee Time)</th>
-                        <th>Socio / Jugador</th>
-                        <th>Línea</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>06:00 AM</td>
-                        <td>Familia Restrepo</td>
-                        <td>Hoyo 1</td>
-                        <td><span class="badge completado">Salió</span></td>
-                    </tr>
-                    <tr>
-                        <td>07:30 AM</td>
-                        <td>Torneo Interno (Grupo A)</td>
-                        <td>Hoyo 1</td>
-                        <td><span class="badge pendiente">Próximo</span></td>
-                    </tr>
-                    <tr>
-                        <td>08:15 AM</td>
-                        <td>Mauricio Gómez</td>
-                        <td>Hoyo 10</td>
-                        <td><span class="badge pendiente">Próximo</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+            <div id="mensaje-kiosk" class="alerta-exito oculto"></div>
+        </main>
+    </div>
 
-    </main>
+    <!-- 4. APLICACIÓN PRINCIPAL (Caddies y Caddie Master) -->
+    <div id="app-shell" class="oculto">
+        <header class="navbar">
+            <div class="user-info">
+                <h1 id="nav-titulo">CaddieTrack</h1>
+                <span id="nav-subtitulo" class="role-badge">Caddie - 3ra Categoría</span>
+            </div>
+            <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </header>
+
+        <!-- Navegación Dinámica según Rol -->
+        <nav class="sub-nav">
+            <button id="btn-tab-turnos" class="sub-nav-btn active" onclick="mostrarVistaApp('vista-turnos')">Mi Turno / Lista</button>
+            <button id="btn-tab-teetimes" class="sub-nav-btn" onclick="mostrarVistaApp('vista-teetimes')">Tee Times</button>
+            <!-- Pestaña exclusiva para Caddie Master -->
+            <button id="btn-tab-dashboard" class="sub-nav-btn oculto" onclick="mostrarVistaApp('vista-dashboard')">Estadísticas</button>
+        </nav>
+
+        <main class="container">
+            
+            <!-- VISTA A: TURNOS Y ESTADO (Caddie y Master) -->
+            <section id="vista-turnos" class="app-section">
+                <!-- Panel de Control Personal del Caddie (Se oculta si es Master) -->
+                <div id="panel-estado-caddie" class="status-card">
+                    <div class="status-header">
+                        <div>
+                            <span class="label-muted">Tu posición en <strong id="lbl-mi-categoria">Tercera Categoría</strong></span>
+                            <div class="posicion-numero" id="lbl-mi-posicion">#1</div>
+                        </div>
+                        <div class="estado-actual-box">
+                            <span class="label-muted">Estado actual:</span>
+                            <span id="badge-mi-estado" class="badge disponible">Disponible</span>
+                        </div>
+                    </div>
+                    <div class="status-actions">
+                        <button class="btn-estado btn-disp" onclick="cambiarMiEstado('Disponible')">Marcar Disponible</button>
+                        <button class="btn-estado btn-campo" onclick="cambiarMiEstado('En Campo')">Salir a Campo</button>
+                    </div>
+                </div>
+
+                <!-- Filtro de Categoría (Visible para Master, bloqueado a su categoría para Caddie) -->
+                <div class="list-header">
+                    <h3 id="titulo-lista-turnos">Cola de Turnos - Tercera Categoría</h3>
+                    <select id="filtro-categoria-master" class="oculto" onchange="renderizarTablaTurnos()">
+                        <option value="Todas">Todas las Categorías</option>
+                        <option value="Primera">Primera Categoría</option>
+                        <option value="Segunda">Segunda Categoría</option>
+                        <option value="Tercera">Tercera Categoría</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Turno</th>
+                                <th>Caddie</th>
+                                <th>Categoría</th>
+                                <th>Llegada</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-turnos"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA B: TEE TIMES DEL CAMPO -->
+            <section id="vista-teetimes" class="app-section oculto">
+                <div class="list-header">
+                    <h3>Horarios de Salida (Tee Times)</h3>
+                    <span class="badge pendiente">Ocupación Hoy: 85%</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Salida</th>
+                                <th>Reserva / Grupo</th>
+                                <th>Caddies Req.</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-teetimes"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA C: DASHBOARD ESTADÍSTICAS (Exclusivo Caddie Master) -->
+            <section id="vista-dashboard" class="app-section oculto">
+                <h3>Panel de Control - Caddie Master</h3>
+                <p class="subtitle-muted">Métricas operativas en tiempo real</p>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <span class="kpi-title">Asistencia Hoy</span>
+                        <div class="kpi-value" id="kpi-asistencia">18 / 24</div>
+                        <span class="kpi-desc">75% de la plantilla registrada en portería</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-title">Caddies que han Cargado</span>
+                        <div class="kpi-value" id="kpi-cargados">11</div>
+                        <span class="kpi-desc">Salidas efectivas acumuladas hoy</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-title">Ocupación Tee Times</span>
+                        <div class="kpi-value" id="kpi-reservas">85%</div>
+                        <span class="kpi-desc">17 de 20 horarios reservados (Casi lleno)</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-title">Disponibles en Sala</span>
+                        <div class="kpi-value" id="kpi-disponibles">7</div>
+                        <span class="kpi-desc">Listos para asignación inmediata</span>
+                    </div>
+                </div>
+
+                <div class="resumen-categorias">
+                    <h4>Desglose de Asistencia por Categoría</h4>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Primera Categoría</span><span>6 / 8</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 75%;"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Segunda Categoría</span><span>7 / 8</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 87%;"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label"><span>Tercera Categoría</span><span>5 / 8</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 62%;"></div></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
 
     <script src="app.js"></script>
 </body>
