@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaddieTrack - Portal de Caddies</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <header class="navbar">
+        <div class="logo">
+            <h1>CaddieTrack</h1>
+            <p>Club Campestre Los Arrayanes - Apoyo Caddie Master</p>
+        </div>
+        <nav>
+            <button onclick="mostrarSeccion('registro')" class="nav-btn active" id="btn-registro">Registro Facial</button>
+            <button onclick="mostrarSeccion('turnos')" class="nav-btn" id="btn-turnos">Lista de Turnos</button>
+            <button onclick="mostrarSeccion('horarios')" class="nav-btn" id="btn-horarios">Tee Times</button>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container">
+        
+        <!-- SECCIÓN 1: Registro Facial (Mockup) -->
+        <section id="registro" class="seccion activa">
+            <h2>Registro de Llegada</h2>
+            <p>Acércate a la cámara para registrar tu turno automáticamente.</p>
+            <div class="camara-mockup">
+                <div class="marco-facial">
+                    <span class="esquina tl"></span>
+                    <span class="esquina tr"></span>
+                    <span class="esquina bl"></span>
+                    <span class="esquina br"></span>
+                    <p>Buscando rostro...</p>
+                </div>
+            </div>
+            <button class="btn-simular" onclick="simularRegistro()">Simular Reconocimiento Exitoso</button>
+            <div id="mensaje-registro" class="oculto"></div>
+        </section>
+
+        <!-- SECCIÓN 2: Lista de Turnos -->
+        <section id="turnos" class="seccion oculto">
+            <h2>Asignación de Turnos</h2>
+            <p>Orden de salida basado en categoría y hora de llegada.</p>
+            <table class="tabla-datos">
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Caddie</th>
+                        <th>Categoría</th>
+                        <th>Hora de Llegada</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-caddies">
+                    <tr>
+                        <td>1</td>
+                        <td>Carlos Mendoza</td>
+                        <td>Primera</td>
+                        <td>05:30 AM</td>
+                        <td><span class="badge en-campo">En Campo</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Juan Camilo Prieto</td>
+                        <td>Tercera</td>
+                        <td>06:05 AM</td>
+                        <td><span class="badge disponible">Disponible</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Andrés Vargas</td>
+                        <td>Segunda</td>
+                        <td>06:15 AM</td>
+                        <td><span class="badge disponible">Disponible</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN 3: Horarios y Tee Times -->
+        <section id="horarios" class="seccion oculto">
+            <h2>Horarios Reservados (Tee Times)</h2>
+            <p>Consulta la ocupación del campo para el día de hoy.</p>
+            <table class="tabla-datos">
+                <thead>
+                    <tr>
+                        <th>Hora (Tee Time)</th>
+                        <th>Socio / Jugador</th>
+                        <th>Línea</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>06:00 AM</td>
+                        <td>Familia Restrepo</td>
+                        <td>Hoyo 1</td>
+                        <td><span class="badge completado">Salió</span></td>
+                    </tr>
+                    <tr>
+                        <td>07:30 AM</td>
+                        <td>Torneo Interno (Grupo A)</td>
+                        <td>Hoyo 1</td>
+                        <td><span class="badge pendiente">Próximo</span></td>
+                    </tr>
+                    <tr>
+                        <td>08:15 AM</td>
+                        <td>Mauricio Gómez</td>
+                        <td>Hoyo 10</td>
+                        <td><span class="badge pendiente">Próximo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
